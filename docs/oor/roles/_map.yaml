@@ -1,0 +1,100 @@
+# Roles Capabilities Map
+# Карта мандатов (прав доступа) для каждой роли в OOR-IDE
+
+roles:
+  Analyst:
+    description: "Проектировщик смыслов. Создаёт и редактирует требования, глоссарий, сущности."
+    abstract: false
+    mandates:
+      # Action Mandates (Мандаты на действие)
+      - M-OOR-ACT-APPROVE    # Утверждение артефакта (Draft → Validated)
+      - M-OOR-ACT-REJECT     # Возврат на доработку (Validated → Draft)
+      
+      # Visibility Mandates (Мандаты на видимость)
+      - M-OOR-CREATE         # Создание новых проектов и модулей
+      - M-OOR-VIEW-DRAFT     # Чтение и редактирование черновиков
+      - M-OOR-VIEW-VALIDATED # Чтение утверждённых артефактов
+    
+    capabilities:
+      - CreateRequirementProject
+      - EditDomainModuleDraft
+      - CreateMethodDefinition
+      - ApproveDomainModule
+      - RejectDomainModule
+      - ViewValidatedArtifacts
+      - ViewOwnDrafts
+
+  Reviewer:
+    description: "Контролёр качества и SSOT (Single Source of Truth). Проверяет и утверждает артефакты."
+    abstract: false
+    mandates:
+      # Action Mandates
+      - M-OOR-ACT-APPROVE    # Утверждение артефакта
+      - M-OOR-ACT-REJECT     # Возврат на доработку
+      - M-OOR-ACT-FREEZE     # Фиксация версии (Validated → Frozen)
+      
+      # Visibility Mandates
+      - M-OOR-VIEW-DRAFT     # Чтение всех черновиков
+      - M-OOR-VIEW-VALIDATED # Чтение утверждённых артефактов
+    
+    capabilities:
+      - ReviewDomainModule
+      - ApproveDomainModule
+      - RejectDomainModule
+      - FreezeDomainModule
+      - ViewAllDrafts
+      - ViewValidatedArtifacts
+
+  AI-Developer:
+    description: "ИИ-агент (автоматизированная роль). Генерирует код на основе утверждённых требований."
+    abstract: false
+    mandates:
+      # Visibility Mandates (только чтение)
+      - M-OOR-VIEW-VALIDATED # Чтение утверждённых артефактов
+    
+    capabilities:
+      - ReadValidatedRequirements
+      - GenerateCodeFromSpecifications
+      - RefactorCode
+      - SyncWithOORContext
+      - ValidateCodeAgainstRules
+      - MaintainTraceability
+
+# Маппинг мандатов на переходы (для трассировки)
+mandate_to_transition:
+  M-OOR-ACT-APPROVE:
+    transition: transition_approve
+    method: approveDomainModule()
+    description: "Утверждение артефакта (Draft → Validated)"
+    
+  M-OOR-ACT-REJECT:
+    transition: transition_reject
+    method: rejectDomainModule()
+    description: "Возврат на доработку (Validated → Draft)"
+    
+  M-OOR-ACT-FREEZE:
+    transition: transition_freeze
+    method: freezeDomainModule()
+    description: "Фиксация версии (Validated → Frozen)"
+
+# Маппинг мандатов на сущности (для Visibility Mandates)
+mandate_to_entity:
+  M-OOR-CREATE:
+    entity: Requirement_Project
+    access: "Write: [title, description]"
+    
+  M-OOR-VIEW-DRAFT:
+    entity: Domain_Module
+    access: "Read: [name, description, status, created_at, updated_at]; Write: [name, description] (только при status = Draft)"
+    
+  M-OOR-VIEW-VALIDATED:
+    entity: Domain_Module
+    access: "Read: [all fields]"
+
+# Наследование ролей (если будет введена базовая роль)
+inheritance:
+  # BASE_USER:
+  #   mandates:
+  #     - M-ID-ACT-LOGIN
+  #     - M-ID-VIEW-USER_SELF
+  #   inherited_by: [Analyst, Reviewer, AI-Developer]

@@ -1,0 +1,29 @@
+# OOR-IDE - навигационный слой
+# Программный комплекс для проектирования систем на основе объектно-ориентированных требований (OOR)
+
+title: OOR-IDE
+description: Инструмент для аналитиков и архитекторов: проектирование на основе OOR и передача требований ИИ-агентам для генерации кода.
+
+layers:
+  semantic:
+    path: glossary/
+    description: Терминология (Core + Domain); наследование от [Base] Document
+    index: glossary/README.md
+  subjects:
+    path: roles/
+    description: Роли участников процесса
+  domain:
+    path: domains/oor_manager/
+    description: Доменная модель (Entities, Transitions, Rules, Mandates)
+    index: domains/oor_manager/README.md
+  scenario:
+    path: scenarios.md
+    description: Сценарии работы (UI/UX Flow) - редактор, State Machine, AI-Sync
+
+roles:
+  - id: analyst
+    ref: roles/analyst.md
+  - id: ai_developer
+    ref: roles/ai_developer.md
+  - id: reviewer
+    ref: roles/reviewer.md
